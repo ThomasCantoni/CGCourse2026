@@ -1,1 +1,1 @@
-add_executable(code_01_glfw customName.cpp)
+add_executable(myExperiment1 customName.cpp)
