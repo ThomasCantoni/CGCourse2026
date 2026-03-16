@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "src/code_04_robotic_arm_transformations",
+		"source" : "src/code_04_robotic_arm_transformations"
+	}
+}

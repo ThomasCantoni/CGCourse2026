@@ -81,6 +81,21 @@ void viewport_to_ray(double pX, double pY, glm::vec4& orig, glm::vec4& dir) {
 	orig = glm::vec4(glm::vec3(0.f, 0.f, 0.f), 1.f);
 	dir = glm::vec4(glm::vec3(pos2, -2.f), 0.f);
 }
+void viewport_to_ray2(glm::mat4 proj,glm::vec4 viewport,double mouseX, double mouseY, glm::vec4& orig, glm::vec4& dir) {
+
+	
+	glm::vec2 mousePositionNormalized;
+	mousePositionNormalized.x = (float)(  (mouseX / viewport.z) * 2 - 1.0 );
+	mousePositionNormalized.y = (float)(  ((viewport.w - mouseY)/ viewport.w) * 2 - 1.0);
+
+	glm::vec4 ndcPoint = glm::vec4(mousePositionNormalized, -1.0, 1.0);
+	glm::mat4 unprojecting = glm::inverse(proj);
+	// convert mouse position from the screen to  view space
+	orig = glm::vec4(glm::vec3(0.f, 0.f, 0.f), 1.f);
+	glm::vec4 viewSpacePoint = unprojecting * ndcPoint;
+	viewSpacePoint = viewSpacePoint / viewSpacePoint.w;
+	dir = glm::normalize( glm::vec4(viewSpacePoint.x, viewSpacePoint.y, viewSpacePoint.z,0.0)) ;
+}
 
 /* handles the intersection between the position under the mouse and the sphere.
 */
@@ -90,9 +105,11 @@ bool cursor_sphere_intersection(glm::vec3& int_point, double xpos, double ypos) 
 	glm::vec4 orig, dir;
 
 	/*
-	* build the ray passing through the pixel xpos,ypos
+	 build the ray passing through the pixel xpos,ypos
 	*/
-	viewport_to_ray(xpos, ypos, orig, dir);
+
+	viewport_to_ray2(proj, glm::vec4(0,0,width,height),xpos, ypos, orig, dir);
+	//viewport_to_ray( xpos, ypos, orig, dir);
 
 	// convert the ray from view space to world space
 	orig = view_frame * orig;

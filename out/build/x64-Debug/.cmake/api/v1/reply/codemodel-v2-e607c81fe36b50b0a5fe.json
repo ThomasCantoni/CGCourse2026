@@ -1,0 +1,358 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "external/glfw",
+					"childIndexes" : 
+					[
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-external.glfw-Debug-cd8d03612b2dd843b8e5.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "external/glfw",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "external/glfw/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-external.glfw.src-Debug-156ba57a7b12eb08f623.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "external/glfw/src",
+					"targetIndexes" : 
+					[
+						9,
+						11
+					]
+				},
+				{
+					"build" : "src",
+					"childIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					],
+					"jsonFile" : "directory-src-Debug-c94b7c2814d5a21df52c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src"
+				},
+				{
+					"build" : "src/code_00_raytracer",
+					"jsonFile" : "directory-src.code_00_raytracer-Debug-284c930616d47435bf81.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_00_raytracer",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "src/code_01_setup_glfw",
+					"jsonFile" : "directory-src.code_01_setup_glfw-Debug-b7ca9bf30e53e17a2386.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_01_setup_glfw",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "src/code_02_my_first_triangle",
+					"jsonFile" : "directory-src.code_02_my_first_triangle-Debug-02a6dba118bf703ff0fe.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_02_my_first_triangle",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "src/code_03_wrapping_shaders_buffers",
+					"jsonFile" : "directory-src.code_03_wrapping_shaders_buffers-Debug-61b20725276f75b692f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_03_wrapping_shaders_buffers",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "src/code_04_robotic_arm_transformations",
+					"jsonFile" : "directory-src.code_04_robotic_arm_transformations-Debug-a95e63060568bed6289d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_04_robotic_arm_transformations",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "src/code_05_assonometry",
+					"jsonFile" : "directory-src.code_05_assonometry-Debug-7a10cd4f7d91e6307d09.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_05_assonometry",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "src/code_06_arm_rotations",
+					"jsonFile" : "directory-src.code_06_arm_rotations-Debug-be9a16daf40e1df01459.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_06_arm_rotations",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "src/code_07_trackball",
+					"jsonFile" : "directory-src.code_07_trackball-Debug-50a87b5f05c148275bc1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/code_07_trackball",
+					"targetIndexes" : 
+					[
+						7
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					],
+					"name" : "CGCourse",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "GLFW",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						9,
+						10,
+						11
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "code_00_raytracer::@1c2747acafdc36f81fe7",
+					"jsonFile" : "target-code_00_raytracer-Debug-59bbd9d72d1b5c23a8e8.json",
+					"name" : "code_00_raytracer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "code_01_setup_glfw::@c8ac1c07610a12615679",
+					"jsonFile" : "target-code_01_setup_glfw-Debug-fd825928380fb47ba2f6.json",
+					"name" : "code_01_setup_glfw",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "code_02_my_first_triangle::@0aae3cf3a01d1ba033d9",
+					"jsonFile" : "target-code_02_my_first_triangle-Debug-fdda5c4c30c35471aaa1.json",
+					"name" : "code_02_my_first_triangle",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "code_03_wrapping_shaders_buffers::@a79bc2c70853bb93d854",
+					"jsonFile" : "target-code_03_wrapping_shaders_buffers-Debug-0e83b3e7f44a7ad9f920.json",
+					"name" : "code_03_wrapping_shaders_buffers",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "code_04_robotic_arm_transformations::@c1d3d74ff05c5e16a0f7",
+					"jsonFile" : "target-code_04_robotic_arm_transformations-Debug-9be4e76b160a898a2eb0.json",
+					"name" : "code_04_robotic_arm_transformations",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "code_05_assonometry::@b20da29267c7e7556b75",
+					"jsonFile" : "target-code_05_assonometry-Debug-aad389504664aec8e447.json",
+					"name" : "code_05_assonometry",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "code_06_arm_rotations::@3946472c29ec8796a23d",
+					"jsonFile" : "target-code_06_arm_rotations-Debug-d52496f4581d069f050f.json",
+					"name" : "code_06_arm_rotations",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 11,
+					"id" : "code_07_trackball::@89759f7a86ae59c59ef7",
+					"jsonFile" : "target-code_07_trackball-Debug-32be9b60a81bce08f8fa.json",
+					"name" : "code_07_trackball",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "glad::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-glad-Debug-0a90010700988d16cb73.json",
+					"name" : "glad",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "glfw::@ca12bac854c2ac6b2230",
+					"jsonFile" : "target-glfw-Debug-c9113668b8c34b790d22.json",
+					"name" : "glfw",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "uninstall::@691b517da5fa0f694cd4",
+					"jsonFile" : "target-uninstall-Debug-36af8254ac489dfbdab8.json",
+					"name" : "uninstall",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "update_mappings::@ca12bac854c2ac6b2230",
+					"jsonFile" : "target-update_mappings-Debug-5f7b1ea14553ed12df86.json",
+					"name" : "update_mappings",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/thoma/Desktop/Projects/CG Course 2026/My version/out/build/x64-Debug",
+		"source" : "C:/Users/thoma/Desktop/Projects/CG Course 2026/My version"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

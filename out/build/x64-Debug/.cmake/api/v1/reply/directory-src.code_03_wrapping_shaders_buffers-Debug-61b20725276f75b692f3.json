@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "src/code_03_wrapping_shaders_buffers",
+		"source" : "src/code_03_wrapping_shaders_buffers"
+	}
+}
