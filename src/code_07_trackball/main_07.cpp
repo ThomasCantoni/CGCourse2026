@@ -93,6 +93,7 @@ void viewport_to_ray2(glm::mat4 proj,glm::vec4 viewport,double mouseX, double mo
 	// convert mouse position from the screen to  view space
 	orig = glm::vec4(glm::vec3(0.f, 0.f, 0.f), 1.f);
 	glm::vec4 viewSpacePoint = unprojecting * ndcPoint;
+	//w = 1/OldZ, so i divide everything by w to reobtain unprojected points
 	viewSpacePoint = viewSpacePoint / viewSpacePoint.w;
 	dir = glm::normalize( glm::vec4(viewSpacePoint.x, viewSpacePoint.y, viewSpacePoint.z,0.0)) ;
 }
