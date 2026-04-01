@@ -128,15 +128,16 @@ void window_size_callback(GLFWwindow* window, int _width, int _height)
 
 
 // variable for the lighting
-float a_color[3] = { 0.15f,0.15f,0.15f };
-float d_color[3] = { 0.5f,0.1f,0.2f };
-float s_color[3] = { 0.5f,0.1f,0.2f };
-float e_color[3] = { 0.5f,0.1f,0.2f };
-float l_color[3] = { 0.9f,0.9f,0.9f };
-float shininess = 1.0;
+float metaballColor[3] = { 1.0f,0.0f,1.0f };
+float metaballBorderColor[3] = { 1.0f,0.0f,0.0f };
+float metaballIsovalueColor[3] = { 0.0f,1.0f,0.0f };
 
-float ct_m = 0.5f;
-float ct_eta = 1.0;
+
+float controlRadius = 1;
+float mergeThresh = 0.5f;
+
+glm::vec2 mb1 = glm::vec2(0,0);
+glm::vec2 mb2 = glm::vec2(0,0);
 
 float on_sigma;
 float on_ro;
@@ -155,35 +156,30 @@ void gui_setup() {
 
 	ImGui::BeginMainMenuBar();
 
-	if (ImGui::BeginMenu("Render Mode")) {
-		if (ImGui::Selectable("none", shading_mode == 0)) shading_mode = 0;
-		if (ImGui::Selectable("Flat-Per Face ", shading_mode == 1)) shading_mode = 1;
-		if (ImGui::Selectable("Gaurad", shading_mode == 2)) shading_mode = 2;
-		if (ImGui::Selectable("Phong", shading_mode == 3)) shading_mode = 3;
-		if (ImGui::Selectable("Cook-Torrance", shading_mode == 4)) shading_mode = 4;
-		if (ImGui::Selectable("Oren-Nayar", shading_mode == 5)) shading_mode = 5;
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Light ")) {
-		ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoOptions;
-		ImGui::ColorEdit3("light color", (float*)&l_color, misc_flags);
-		ImGui::EndMenu();
-	}
+	if (ImGui::BeginMenu("Metaball params")) {
+		
+		if (ImGui::ColorEdit3("MB Internal Colors", metaballColor));
+		if (ImGui::ColorEdit3("MB Controld radius color ", metaballBorderColor));
+		if (ImGui::ColorEdit3("MB isovalue color ", metaballIsovalueColor));
 
-	if (ImGui::BeginMenu("Material ")) {
-		ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoOptions;
-		ImGui::ColorEdit3("amb color", (float*)&a_color, misc_flags);
-		ImGui::ColorEdit3("diff color", (float*)&d_color, misc_flags);
-		ImGui::ColorEdit3("spec color", (float*)&s_color, misc_flags);
-		ImGui::SliderFloat("shininess", &shininess, 1.0, 500.f);
-		ImGui::ColorEdit3("emiss color", (float*)&e_color, misc_flags);
-		ImGui::SliderFloat("m (Cook-Torrance)", &ct_m, 0.001, 1.f);
-		ImGui::SliderFloat("eta (Cook-Torrance)", &ct_eta, 1, 2.0f);
 
-		ImGui::SliderFloat("ro (Oren-Nayar)", &on_ro, 0.0, 1.0f);
-		ImGui::SliderFloat("sigma (Oren-Nayar)", &on_sigma, 0.01, 2.0f);
+
+		if (ImGui::SliderFloat("MB1 position  X", &mb1.x,-1,1)) ;
+		if (ImGui::SliderFloat("MB1 position  Y", &mb1.y, -1, 1));
+	
+
+		if (ImGui::SliderFloat("MB2 position  X", &mb2.x, -1, 1));
+		if (ImGui::SliderFloat("MB2 position  Y", &mb2.y, -1, 1));
+
+		if (ImGui::SliderFloat("Control radius  ", &controlRadius,0.0,1));
+		if (ImGui::SliderFloat("Threshold  ", &mergeThresh, 0.0, 1.0));
+
+
+
+		
 		ImGui::EndMenu();
 	}
+	
 
 	ImGui::EndMainMenuBar();
 }
@@ -224,7 +220,7 @@ int main(int argc, char** argv)
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	/* Create a windowed mode window and its OpenGL context */
 	width = 1000;
-	height = 800;
+	height = 1000;
 	window = glfwCreateWindow(width, height, "code_09_lighting_shading", NULL, NULL);
 	if (!window)
 	{
@@ -265,113 +261,83 @@ int main(int argc, char** argv)
 
 	/* load the shaders */
 	shader basic_shader;
-	basic_shader.create_program("shaders/basic.vert", "shaders/basic.frag");
+	basic_shader.create_program("shaders/basic.vert", "shaders/basicMB.frag");
 
-	/* create a cone (for the tip of the arrow) */
-	r_cone = shape_maker::cone(1.f, 1.f, 10);
-
-	/* create a cylinder (for the body of the arrow) */
-	r_cyl = shape_maker::cylinder(10);
-
-
-	std::vector<renderable> r_model;
-	box3 bbox;
-	gltf_loader loader;
-	loader.load_to_renderable("../../models/cabin.glb", r_model, bbox);
-
-	/* Transformation to setup the point of view on the scene */
-	proj = glm::perspective(glm::radians(40.f), width / float(height), 2.f, 20.f);
-	view = glm::lookAt(glm::vec3(0, 7, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
-
-	/* Light direction is initialized as +Y */
-	Ldir = glm::vec4(0, 1, 0, 0);
-
+	renderable fullscreenQuad = shape_maker::quad();
+	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	matrix_stack stack;
+	
 
 	/* set the viewport  */
 	glViewport(0, 0, width, height);
 
 	glUseProgram(basic_shader.program);
-	glUniformMatrix4fv(basic_shader["uProj"], 1, GL_FALSE, &proj[0][0]);
-	glUniformMatrix4fv(basic_shader["uView"], 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(basic_shader["uModel"], 1, GL_FALSE, &glm::mat4(1.f)[0][0]);
+
 	glUniform3f(basic_shader["uColor"], 1.0, 0.0, 0.0);
 
-	/* set the trackballs position */
-	tb[0].set_center_radius(glm::vec3(0, 0, 0), 2.f);
-	tb[1].set_center_radius(glm::vec3(0, 0, 0), 2.f);
-	curr_tb = 0;
+	// 1. Define the 4 corners of the screen (Two triangles making a rectangle)
+	float quadVertices[] = {
+		// x, y
+		-1.0f,  1.0f, // Top-left
+		-1.0f, -1.0f, // Bottom-left
+		 1.0f, -1.0f, // Bottom-right
 
+		-1.0f,  1.0f, // Top-left
+		 1.0f, -1.0f, // Bottom-right
+		 1.0f,  1.0f  // Top-right
+	};
 
+	// 2. Set up the memory buffers on the GPU
+	unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
 
-	glEnable(GL_DEPTH_TEST);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+
+	// Tell OpenGL how to read the floats (2 floats per vertex)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+	
+
+	
+
+	// Swap buffers (glfwSwapBuffers)
+	
+
+	//glEnable(GL_DEPTH_TEST);
 	glUseProgram(basic_shader.program);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		// light direction
-		/* Update the light direction using the trackball tb[1]
-		   It's just a rotation
-		*/
-		Ldir = tb[1].matrix() * glm::vec4(0, 1, 0, 0);
-
-
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.8f, 0.8f, 0.9f, 1.f);
-
-		glUniform1i(basic_shader["uShadingMode"], shading_mode);
-		glUniform3fv(basic_shader["uDiffuseColor"], 1, &d_color[0]);
-		glUniform3fv(basic_shader["uAmbientColor"], 1, &a_color[0]);
-		glUniform3fv(basic_shader["uSpecularColor"], 1, &s_color[0]);
-		glUniform1f(basic_shader["uShininess"], shininess);
-		glUniform3fv(basic_shader["uLightColor"], 1, &l_color[0]);
-		glUniform3f(basic_shader["uLDir"], Ldir.x, Ldir.y, Ldir.z);
-
-		// Cook-Torrance parameters
-		glUniform1f(basic_shader["uCT_m"], ct_m);
-		glUniform1f(basic_shader["uCT_eta"], ct_eta);
-
-		// Oren-Nayar parameters
-		glUniform1f(basic_shader["uON_sigma"], on_sigma);
-		glUniform1f(basic_shader["uON_ro"], on_ro);
-
-
-		stack.push();
-		stack.mult(tb[0].matrix());
-
-
-		// draw the model loaded from the gltf file
-		stack.push();
-		stack.mult(glm::scale(glm::vec3(2.f / bbox.diagonal())));
 		
-		for (unsigned int i = 0; i < r_model.size(); ++i)
-			{
-				r_model[i].bind();
-				stack.push();
-				stack.mult(r_model[i].transform);
-				glUniformMatrix4fv(basic_shader["uModel"], 1, GL_FALSE, &stack.m()[0][0]);
-				glDrawElements(r_model[i]().mode, r_model[i]().count, r_model[i]().itype, 0);
-				stack.pop();
-			}
-		stack.pop();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 
-		stack.push();
-		stack.mult(tb[1].matrix());
+		// DRAW THE QUAD
 
-		glUseProgram(basic_shader.program);
-		glUniform3f(basic_shader["uLDir"], 0.f, 0.f, 1.f);
-		glUniformMatrix4fv(basic_shader["uModel"], 1, GL_FALSE, &stack.m()[0][0]);
-		draw_arrow(stack, basic_shader);
-		stack.pop();
+		glUniform3fv(basic_shader["uColor"],1,&metaballColor[0]);
+		glUniform3fv(basic_shader["uBorderColor"], 1, &metaballBorderColor[0]);
+		glUniform3fv(basic_shader["uIsovalueColor"], 1, &metaballIsovalueColor[0]);
 
-		stack.pop();
+		glUniform1f(basic_shader["uControlRadius"], controlRadius);
+
+		glUniform1f(basic_shader["uMergingThreshold"], mergeThresh);
 
 
+
+		glUniform2f(basic_shader["uMB1"], mb1.x, mb1.y);
+		glUniform2f(basic_shader["uMB2"], mb2.x, mb2.y);
+		
+		fullscreenQuad.bind();
+		glDrawElements(fullscreenQuad().mode, fullscreenQuad().count, fullscreenQuad().itype, 0);
+		//glBindVertexArray(quadVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 		/* draw the Graphical User Interface */
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
