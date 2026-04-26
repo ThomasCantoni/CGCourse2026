@@ -1,6 +1,9 @@
 #pragma once
 #include <tinygltf/tiny_gltf.h>
 
+#ifndef _WIN32
+#define memcpy_s(dest, destsz, src, count) memcpy(dest, src, count)
+#endif
 
 #include "texture.h"
 #include "renderable.h"
@@ -55,6 +58,22 @@ struct gltf_loader {
 			exit(-1);
 		}
 	}
+
+	void access(const tinygltf::Accessor& accessor){
+		// Compute byteStride from Accessor + BufferView combination.
+		int byteStride =
+			accessor.ByteStride(model.bufferViews[accessor.bufferView]);
+		assert(byteStride != -1);
+
+		n_vert = (int)accessor.count;
+		int n_comp = accessor.type; // only consider vec2, vec3 and vec4 (TINYGLTF_TYPE_VEC* ) 
+
+		size_t buffer = model.bufferViews[accessor.bufferView].buffer;
+		size_t bufferviewOffset = model.bufferViews[accessor.bufferView].byteOffset;
+
+		model.buffers[buffer].data[bufferviewOffset + accessor.byteOffset];
+	}
+
 
 	void visit_node(glm::mat4  currT, int i_node) {
 

@@ -32,7 +32,7 @@ struct renderable {
 	std::vector<GLuint> vbos;
 
 	// vector of element array (indices)
-	element_array  elements;
+	std::vector<element_array > elements;
 
 	// primitive type
 	unsigned int mode;
@@ -48,6 +48,7 @@ struct renderable {
 
 	// transformation matrix
 	glm::mat4 transform;
+
 
 	material mater;
 
@@ -126,24 +127,25 @@ struct renderable {
 
 	template <class IND_TYPE>
 	GLuint add_indices(void* indices, unsigned int count, unsigned int mode) {
-		 
+		elements.push_back(element_array());
 		glBindVertexArray(vao);
-		glGenBuffers(1, &elements.ind);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elements.ind);
+		glGenBuffers(1, &elements.back().ind);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elements.back().ind);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IND_TYPE) * count, indices, GL_STATIC_DRAW);
 		glBindVertexArray(NULL);
-		elements.mode = mode;
-		elements.count = count;
-		elements.itype = type_to_GL<IND_TYPE>();
+		elements.back().mode = mode;
+		elements.back().count = count;
+		elements.back().itype = type_to_GL<IND_TYPE>();
 
-		return elements.ind;
+		return elements.back().ind;
 	};
 
-	/* this function return the   set of indices 
+	/* this function return the first set of indices (if present), that is: elements[0]. 
+	*  Often we have just a set of indices so it comes handy. Otherwise access elements[id]
+	*  with the set of indices you need
 	*/
 	element_array operator()() {
-		return elements;
-	}
+		if (!elements.empty()) return elements[0]; else return element_array();}
 
 	
 };
