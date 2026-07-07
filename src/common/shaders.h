@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <glad/glad.h>
 #include <stdio.h>
 #include <string>
 #include <sstream>
@@ -18,10 +17,10 @@ std::vector<std::string> join(Args... args) {
 }
 
 struct shader {
-	GLuint   vertex_shader, fragment_shader, program;
+	GLuint   vertex_shader, geometry_shader, compute_shader, fragment_shader, program;
 
 	std::map<std::string, int> uni;
-	std::vector<std::pair<unsigned int,std::string>> att;
+	std::vector<std::pair<unsigned int, std::string>> att;
 
 	void bind_uniform(std::string name) {
 		uni[name] = glGetUniformLocation(program, name.c_str());
@@ -32,7 +31,7 @@ struct shader {
 	}
 
 	void bind_attribute(std::string name, unsigned int id) {
-		att.push_back(std::pair<unsigned int, std::string>(id,name));
+		att.push_back(std::pair<unsigned int, std::string>(id, name));
 	}
 
 
@@ -42,22 +41,46 @@ struct shader {
 			exit(0);
 		}
 		return uni[name];
-	} 
+	}
+#if defined(GL_VERSION_4_3)
+	void  create_program(std::vector<std::string>comp_shader) {
+		std::string compute_shader_src_code;
+		for (unsigned int i = 0; i < comp_shader.size(); ++i)
+			compute_shader_src_code += textFileRead(comp_shader[i].c_str()) + "\n";
+		create_program(compute_shader_src_code);
+	}
+	void  create_program(const char* nameC) {
+		std::string compute_shader_src_code = textFileRead(nameC);
+		create_program(compute_shader_src_code);
+	}
 
+	void  create_program(std::string compute_shader_src_code) {
+
+		create_shader(compute_shader_src_code.c_str(), GL_COMPUTE_SHADER);
+		program = glCreateProgram();
+		glAttachShader(program, compute_shader);
+
+		glLinkProgram(program);
+
+		bind_uniform_variables(compute_shader_src_code);
+		check_shader(compute_shader);
+		validate_shader_program(program);
+	}
+#endif
 	/* create a program shader */
-	void  create_program(std::vector<std::string> vert_shader, const char * frag_name) {
+	void  create_program(std::vector<std::string> vert_shader, const char* frag_name) {
 		std::vector<std::string> frag_shader;
 		frag_shader.push_back(frag_name);
 		create_program(vert_shader, frag_shader);
 	}
-	void  create_program( const char* vert_name,  std::vector<std::string> frag_shader) {
+	void  create_program(const char* vert_name, std::vector<std::string> frag_shader) {
 		std::vector<std::string> vert_shader;
 		frag_shader.push_back(vert_name);
 		create_program(vert_shader, frag_shader);
 	}
 
 	void  create_program(std::vector<std::string> vert_shader, std::vector<std::string> frag_shader) {
-		std::cout << "creating program\n vertex shader " <<  std::endl;
+		std::cout << "creating program\n vertex shader " << std::endl;
 		for (unsigned int ii = 0; ii < vert_shader.size(); ++ii)
 			std::cout << vert_shader[ii];
 
@@ -67,12 +90,12 @@ struct shader {
 			std::cout << frag_shader[ii];
 
 		std::string vertex_shader_src_code;
-		for(unsigned int i=0; i < vert_shader.size();++i)
-			vertex_shader_src_code +=  textFileRead(vert_shader[i].c_str())+ "\n";
+		for (unsigned int i = 0; i < vert_shader.size(); ++i)
+			vertex_shader_src_code += textFileRead(vert_shader[i].c_str()) + "\n";
 
 		std::string fragment_shader_src_code;
-		for (unsigned int i = 0; i < frag_shader.size();++i)
-			fragment_shader_src_code +=  textFileRead(frag_shader[i].c_str()) + "\n";
+		for (unsigned int i = 0; i < frag_shader.size(); ++i)
+			fragment_shader_src_code += textFileRead(frag_shader[i].c_str()) + "\n";
 		create_program(vertex_shader_src_code, fragment_shader_src_code);
 	}
 	void  create_program(const GLchar* nameV, const char* nameF) {
@@ -89,9 +112,9 @@ struct shader {
 		glAttachShader(program, vertex_shader);
 		glAttachShader(program, fragment_shader);
 
-		for (unsigned int ia = 0; ia < att.size(); ++ia) 
+		for (unsigned int ia = 0; ia < att.size(); ++ia)
 			glBindAttribLocation(program, att[ia].first, att[ia].second.c_str());
-		
+
 		glLinkProgram(program);
 
 		bind_uniform_variables(vertex_shader_src_code);
@@ -117,8 +140,11 @@ private:
 	bool create_shader(const GLchar* src, unsigned int SHADER_TYPE) {
 		GLuint s = 0;
 		switch (SHADER_TYPE) {
-		case GL_VERTEX_SHADER:   s = vertex_shader = glCreateShader(GL_VERTEX_SHADER);break;
-		case GL_FRAGMENT_SHADER: s = fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);break;
+		case GL_VERTEX_SHADER:   s = vertex_shader = glCreateShader(GL_VERTEX_SHADER); break;
+		case GL_FRAGMENT_SHADER: s = fragment_shader = glCreateShader(GL_FRAGMENT_SHADER); break;
+#if defined(GL_VERSION_4_3)
+		case GL_COMPUTE_SHADER:  s = compute_shader = glCreateShader(GL_COMPUTE_SHADER); break;
+#endif
 		}
 
 		glShaderSource(s, 1, &src, NULL);

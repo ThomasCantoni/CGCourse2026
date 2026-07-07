@@ -10,6 +10,14 @@ add_subdirectory(code_08_raster)
 add_subdirectory(code_09_lighting_shading)
 add_subdirectory(code_10_gltf_loader)
 add_subdirectory(code_11_metaballs)
+add_subdirectory(code_12_texture_mapping)
+add_subdirectory(code_13_shadows)
+add_subdirectory(code_14_ambient_obscurance)
+add_subdirectory(code_15_fsq_raytracer)
+add_subdirectory(code_16_cs_raytracer)
+add_subdirectory(code_17_hybrid_renderer)
+add_subdirectory(code_carousel)
+add_subdirectory(code_carousel_raytracing)
 
 
 
